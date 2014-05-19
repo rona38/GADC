@@ -44,23 +44,28 @@ Run_analysis <- function(directory) {
 	cols=grep("mean()|std()",colnames(X_set))
 	# create the dataset
 	s1 <-cbind(subject_set,y_set,X_set[cols])
-	s1$activity<-getActDesc(s1$activity, activity_labels$act_id, activity_labels$activitydescription)
 	write.csv(s1,"data_avg_std.csv", row.names = FALSE)
 
 	# find the columns with mean() 
 	cols=grep("mean()",colnames(X_set))
 	# create the dataset
 	s2 <-cbind(subject_set,y_set,X_set[cols])
+	# use descriptive name
 	s2$activity<-getActDesc(s2$activity, activity_labels$act_id, activity_labels$activitydescription)
 	write.csv(s2,"data_avg.csv", row.names = FALSE)
 }
 
 getActDesc<- function(data, oldvalue, newvalue) {
+	# convert any factors to characters
+
+	if (is.factor(data))     data     <- as.character(data)
+	if (is.factor(oldvalue)) oldvalue <- as.character(oldvalue)
+	if (is.factor(newvalue)) newvalue <- as.character(newvalue)
 	# create the return vector
 	newvec <- data
 
 	# replace 
-	for (i in oldvalue) newvec[data == i] <- newvalue[oldvalue == i]
+	for (i in unique(oldvalue)) newvec[data == i] <- newvalue[oldvalue == i]
 
 	newvec
 }
